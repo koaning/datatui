@@ -1,11 +1,11 @@
-#descr {
-    padding: 0;
+#pbar {
+    /* padding: 2; */
     margin: 1 4 0 4;
-    background: rgb(196, 185, 185) 90%;
-    width: 100%;
-    text-align: center;
-    border-top: tall rgb(21, 21, 21);
-    border-bottom: tall rgb(21, 21, 21);
+    /* background: rgb(196, 185, 185) 90%; */
+    /* width: 100%; */
+    /* text-align: center; */
+    /* border-top: tall rgb(21, 21, 21);
+    border-bottom: tall rgb(21, 21, 21); */
 }
 
 #content {
@@ -14,29 +14,34 @@
     background: white 90%;
     width: 100%;
     text-align: center;
-    border-top: tall rgb(21, 21, 21);
-    border-bottom: tall rgb(21, 21, 21);
+    /* border-top: tall rgb(21, 21, 21);
+    border-bottom: tall rgb(21, 21, 21); */
 }
 
 Footer {
     text-align: center;
 }
+
 #container{
-    background: lightslategrey;
+    background: rgb(186, 200, 215);
 }
 
 .gray-card-border{
-    border: hkey rgb(75,85,99);
+    border: hkey rgb(54, 61, 71);
 }
 
 .red-card-border{
     border: hkey rgb(220,38,38);
 }
 
+.orange-card-border{
+    border: hkey rgb(220, 172, 38);
+}
+
 .green-card-border{
-    border: hkey rgb(22,163,74);
+    border: hkey rgb(39, 152, 80);
 }
 
 .base-card-border{
-    border: hkey rgb(156,163,175);
+    border: hkey rgb(230, 234, 240);
 }
