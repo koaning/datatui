@@ -1,11 +1,6 @@
 #pbar {
-    /* padding: 2; */
     margin: 1 4 0 4;
-    /* background: rgb(196, 185, 185) 90%; */
-    /* width: 100%; */
-    /* text-align: center; */
-    /* border-top: tall rgb(21, 21, 21);
-    border-bottom: tall rgb(21, 21, 21); */
+    padding: 0;
 }
 
 #content {
@@ -14,8 +9,6 @@
     background: white 90%;
     width: 100%;
     text-align: center;
-    /* border-top: tall rgb(21, 21, 21);
-    border-bottom: tall rgb(21, 21, 21); */
 }
 
 Footer {
@@ -23,7 +16,7 @@ Footer {
 }
 
 #container{
-    background: rgb(186, 200, 215);
+    background: rgb(176, 178, 180);
 }
 
 .gray-card-border{
@@ -39,7 +32,7 @@ Footer {
 }
 
 .green-card-border{
-    border: hkey rgb(39, 152, 80);
+    border: hkey rgb(41, 204, 101);
 }
 
 .base-card-border{

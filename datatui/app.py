@@ -81,7 +81,8 @@ def datatui(cache_name: str, input_stream: list, collection_name: str, pbar: boo
         
         def update_view(self):
             self.query_one("#content").update(self.state.current_example["content"])
-            self.query_one("#pbar").update(advance=1)
+            if pbar:
+                self.query_one("#pbar").update(advance=1)
         
         def _handle_annot_effect(self, answer: str) -> None:
             self.query_one("#content").remove_class("base-card-border")

@@ -7,4 +7,4 @@ def generator():
         i += 1
 
 if __name__ == "__main__":
-    datatui("annotations", list(generator()), "default", pbar=True)
+    datatui("annotations", list(generator()), "default", pbar=False)
