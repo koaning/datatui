@@ -2,10 +2,10 @@
     margin: 1 4 0 4;
     padding: 0;
 }
-
+ 
 #content {
     padding: 2 6;
-    margin: 1 4 2 4;
+    margin: 1 4 1 4;
     background: white 90%;
     width: 100%;
     text-align: center;
@@ -16,7 +16,7 @@ Footer {
 }
 
 #container{
-    background: rgb(176, 178, 180);
+    background: rgb(86, 102, 118);
 }
 
 .gray-card-border{
@@ -32,7 +32,7 @@ Footer {
 }
 
 .green-card-border{
-    border: hkey rgb(41, 204, 101);
+    border: hkey rgb(24, 215, 94);
 }
 
 .base-card-border{

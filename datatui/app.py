@@ -62,7 +62,7 @@ class State:
         return self._current_example
 
 
-def datatui(cache_name: str, input_stream: list, collection_name: str, pbar: bool = True):
+def datatui(cache_name: str, input_stream: list, collection_name: str, pbar: bool = True, description=None):
     class DatatuiApp(App):
         ACTIVE_EFFECT_DURATION = 0.6
         CSS_PATH = Path(__file__).parent / "static" / "app.css"
@@ -79,8 +79,14 @@ def datatui(cache_name: str, input_stream: list, collection_name: str, pbar: boo
             self.state.write_annot(label=answer)
             self.update_view()
         
+        def _example_text(self):
+            content = self.state.current_example[self.state._content_key]
+            if description:
+                return f"[bold black]{description}[/]\n\n" + content
+            return content
+
         def update_view(self):
-            self.query_one("#content").update(self.state.current_example["content"])
+            self.query_one("#content").update(self._example_text())
             if pbar:
                 self.query_one("#pbar").update(advance=1)
         
@@ -107,7 +113,7 @@ def datatui(cache_name: str, input_stream: list, collection_name: str, pbar: boo
             items = []
             if pbar:
                 items.append(Center(ProgressBar(total=self.state.stream_size, show_eta=False, id="pbar")))
-            items.append(Static(self.state.current_example['content'], id='content', classes='gray-card-border'))
+            items.append(Static(self._example_text(), id='content', classes='gray-card-border'))
             yield Container(*items, id='container')
             yield Footer()
             
