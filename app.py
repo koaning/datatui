@@ -7,4 +7,4 @@ def generator():
         i += 1
 
 if __name__ == "__main__":
-    datatui("annotations", list(generator()), "default", pbar=False)
+    datatui("annotations", list(generator()), "default", pbar=True, description="Just assign a random note.")
