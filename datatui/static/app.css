@@ -6,7 +6,7 @@
 #content {
     padding: 2 6;
     margin: 1 4 1 4;
-    background: white 90%;
+    background: $panel;
     width: 100%;
     text-align: center;
 }
@@ -16,11 +16,11 @@ Footer {
 }
 
 #container{
-    background: rgb(86, 102, 118);
+    
 }
 
-.gray-card-border{
-    border: hkey rgb(54, 61, 71);
+.teal-card-border{
+    border: hkey rgb(55, 255, 248);
 }
 
 .red-card-border{
@@ -36,5 +36,6 @@ Footer {
 }
 
 .base-card-border{
-    border: hkey rgb(230, 234, 240);
+    border: hkey $panel;
 }
+

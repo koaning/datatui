@@ -49,7 +49,7 @@ class State:
             try:
                 self._current_example = next(self.stream())
             except StopIteration:
-                self._current_example = {"content": "No more examples."}
+                self._current_example = {"content": "No more examples. All done!"}
                 self._done = True
         return self._current_example
     
@@ -57,14 +57,14 @@ class State:
         try:
             self._current_example = next(self.stream())
         except StopIteration:
-            self._current_example = {"content": "No more examples."}
+            self._current_example = {"content": "No more examples. All done!"}
             self._done = True
         return self._current_example
 
 
 def datatui(cache_name: str, input_stream: list, collection_name: str, pbar: bool = True, description=None):
     class DatatuiApp(App):
-        ACTIVE_EFFECT_DURATION = 0.6
+        ACTIVE_EFFECT_DURATION = 0.3
         CSS_PATH = Path(__file__).parent / "static" / "app.css"
         BINDINGS = [
             Binding(key="f", action="on_annot('yes')", description="Annotate yes."),
@@ -81,6 +81,8 @@ def datatui(cache_name: str, input_stream: list, collection_name: str, pbar: boo
         
         def _example_text(self):
             content = self.state.current_example[self.state._content_key]
+            if self.state._done:
+                return "\n\n" + content + "\n\n"
             if description:
                 return f"[bold black]{description}[/]\n\n" + content
             return content
@@ -92,7 +94,7 @@ def datatui(cache_name: str, input_stream: list, collection_name: str, pbar: boo
         
         def _handle_annot_effect(self, answer: str) -> None:
             self.query_one("#content").remove_class("base-card-border")
-            class_to_add = "gray-card-border"
+            class_to_add = "teal-card-border"
             if answer == "yes":
                 class_to_add = "green-card-border"
             if answer == "no":
