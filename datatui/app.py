@@ -7,80 +7,82 @@ from textual.binding import Binding
 from textual.widgets import Footer, Static, ProgressBar
 from textual.containers import Container, Center
 
-
 class State:
-    def __init__(self, input_stream, cache: str, collection_name: str) -> None:
+    def __init__(self, examples, cache:str, collection:str) -> None:
         self.cache = Cache(cache)
-        self._collection_name = collection_name
-        self._input_stream = input_stream
-        self._input_size = len(input_stream) if isinstance(input_stream, list) else None
-        self._content_key = "content"
+        self.collection = collection
+        self.examples = examples
+        self.position = 0
         self._current_example = None
-        self._done = False
-        self._position = 0
-
+        self._content_key = "content"
+        for i, ex in enumerate(examples):
+            if self.mk_hash(ex) not in self.cache:
+                self.position = i
+                break
+    
     def mk_hash(self, ex):
-        string_repr = ex[self._content_key] + self._collection_name
+        string_repr = ex["content"] + self.collection
         return md5(string_repr.encode()).hexdigest()
 
     def write_annot(self, label):
-        if not self._done:
+        if self.current_example:
             self.cache[self.mk_hash(self.current_example)] = {
                 **self.current_example, 
                 'label': label,
-                'collection': self._collection_name,
+                'collection': self.collection,
                 'timestamp': int(time())
             }
             return self.next_example()
     
-    @property
-    def stream_size(self):
-        return self._input_size
-
-    def stream(self):
-        for ex in self._input_stream:
-            if self.mk_hash(ex) not in self.cache:
-                yield ex
-            self._position += 1
+    def __len__(self):
+        return len(self.examples)
     
     @property
     def current_example(self):
-        if self._current_example is None:
-            try:
-                self._current_example = next(self.stream())
-            except StopIteration:
-                self._current_example = {"content": "No more examples."}
-                self._done = True
-        return self._current_example
+        return self.examples[self.position]
     
     def next_example(self):
-        try:
-            self._current_example = next(self.stream())
-        except StopIteration:
-            self._current_example = {"content": "No more examples."}
-            self._done = True
-        return self._current_example
+        if self.position == len(self.examples) - 1:
+            return {"content": "No more examples. All done!"}
+        self.position += 1
+        return self.current_example
 
+    def prev_example(self):
+        if self.position == 0:
+            return self.current_example
+        self.position -= 1
+        return self.current_example
+    
+    def done(self):
+        return self.position == len(self.examples) - 1
+    
 
 def datatui(cache_name: str, input_stream: list, collection_name: str, pbar: bool = True, description=None):
     class DatatuiApp(App):
-        ACTIVE_EFFECT_DURATION = 0.6
+        ACTIVE_EFFECT_DURATION = 0.3
         CSS_PATH = Path(__file__).parent / "static" / "app.css"
         BINDINGS = [
             Binding(key="f", action="on_annot('yes')", description="Annotate yes."),
             Binding(key="j", action="on_annot('no')", description="Annotate no."),
             Binding(key="m", action="on_annot('maybe')", description="Annotate maybe."),
             Binding(key="space", action="on_annot('skip')", description="Skip the thing."),
+            Binding(key="backspace", action="on_annot('back')", description="Previous example."),
         ]
         state = State(input_stream, cache_name, collection_name)
 
         def action_on_annot(self, answer: str) -> None:
+            if answer == "back":
+                self.state.prev_example()
+                self.update_view()
+                return
             self._handle_annot_effect(answer=answer)
             self.state.write_annot(label=answer)
             self.update_view()
         
         def _example_text(self):
             content = self.state.current_example[self.state._content_key]
+            if self.state.done():
+                return "\n\n" + content + "\n\n"
             if description:
                 return f"[bold black]{description}[/]\n\n" + content
             return content
@@ -88,11 +90,11 @@ def datatui(cache_name: str, input_stream: list, collection_name: str, pbar: boo
         def update_view(self):
             self.query_one("#content").update(self._example_text())
             if pbar:
-                self.query_one("#pbar").update(advance=1)
+                self.query_one("#pbar").update(progress=self.state.position)
         
         def _handle_annot_effect(self, answer: str) -> None:
             self.query_one("#content").remove_class("base-card-border")
-            class_to_add = "gray-card-border"
+            class_to_add = "teal-card-border"
             if answer == "yes":
                 class_to_add = "green-card-border"
             if answer == "no":
@@ -112,7 +114,7 @@ def datatui(cache_name: str, input_stream: list, collection_name: str, pbar: boo
         def compose(self) -> ComposeResult: 
             items = []
             if pbar:
-                items.append(Center(ProgressBar(total=self.state.stream_size, show_eta=False, id="pbar")))
+                items.append(Center(ProgressBar(total=len(self.state), show_eta=False, id="pbar")))
             items.append(Static(self._example_text(), id='content', classes='gray-card-border'))
             yield Container(*items, id='container')
             yield Footer()
@@ -122,7 +124,7 @@ def datatui(cache_name: str, input_stream: list, collection_name: str, pbar: boo
             self.title = "Datatui - enriching data from the terminal"
             self.icon = None
             if pbar:
-                self.query_one("#pbar").update(progress=self.state._position)
+                self.query_one("#pbar").update(progress=self.state.position)
     
     DatatuiApp().run()
 
