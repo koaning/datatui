@@ -19,52 +19,37 @@ def sample_input_stream():
 
 def test_state_initialization(temp_cache_dir, sample_input_stream):
     state = State(sample_input_stream, temp_cache_dir, "test_collection")
-    assert isinstance(state.cache, Cache)
-    assert state._collection_name == "test_collection"
-    assert state._input_stream == sample_input_stream
-    assert state._input_size == 3
-    assert state._content_key == "content"
-    assert state._current_example is None
-    assert not state._done
-    assert state._position == 0
+    assert len(state) == 3
+    assert state.position == 0
+    assert state.current_example == {"content": "Example 1"}
+    assert state.collection == "test_collection"
+    assert not state.done()
 
-def test_mk_hash(temp_cache_dir, sample_input_stream):
+def test_state_prev_next_example(temp_cache_dir, sample_input_stream):
     state = State(sample_input_stream, temp_cache_dir, "test_collection")
-    example = {"content": "Test content"}
-    hash_value = state.mk_hash(example)
-    assert isinstance(hash_value, str)
-    assert len(hash_value) == 32  # MD5 hash is 32 characters long
+    assert state.position == 0
+    assert state.next_example() == {"content": "Example 2"}
+    assert state.current_example == {"content": "Example 2"}
+    assert state.position == 1
+    assert state.next_example() == {"content": "Example 3"}
+    assert state.current_example == {"content": "Example 3"}
+    assert state.position == 2
+    assert state.next_example() == {"content": "No more examples. All done!"}
+    assert state.position == 2
+    assert state.done()
+    assert state.prev_example() == {"content": "Example 2"}
+    assert state.position == 1
+    assert state.prev_example() == {"content": "Example 1"}
+    assert state.position == 0
+    assert state.prev_example() == {"content": "Example 1"}
+    assert state.position == 0
 
-def test_write_annot(temp_cache_dir, sample_input_stream):
+def test_state_write_annot(temp_cache_dir, sample_input_stream):
     state = State(sample_input_stream, temp_cache_dir, "test_collection")
-    state._current_example = sample_input_stream[0]
-    result = state.write_annot("test_label")
-    assert result  # Should return True as there are more examples
-    assert state._position == 1
-    
-    # Check if the annotation was written to cache
-    cached_item = state.cache[state.mk_hash(sample_input_stream[0])]
-    assert cached_item["label"] == "test_label"
-    assert cached_item["collection"] == "test_collection"
-    assert "timestamp" in cached_item
-
-def test_stream(temp_cache_dir, sample_input_stream):
-    state = State(sample_input_stream, temp_cache_dir, "test_collection")
-    stream = list(state.stream())
-    assert len(stream) == 3
-    assert state._position == 3
-
-def test_current_example(temp_cache_dir, sample_input_stream):
-    state = State(sample_input_stream, temp_cache_dir, "test_collection")
-    assert state.current_example == sample_input_stream[0]
-    state.next_example()
-    assert state.current_example == sample_input_stream[1]
-    state.next_example()
-    assert state.current_example == sample_input_stream[2]
-    state.next_example()
-    assert state.current_example == {"content": "No more examples."}
-    assert state._done
-
-def test_stream_size(temp_cache_dir, sample_input_stream):
-    state = State(sample_input_stream, temp_cache_dir, "test_collection")
-    assert state.stream_size == 3
+    state.write_annot("yes")
+    assert state.position == 1
+    cache = Cache(temp_cache_dir)
+    stored_example = cache[state.mk_hash(sample_input_stream[0])]
+    assert stored_example["label"] == "yes"
+    assert stored_example["collection"] == "test_collection"
+    assert "timestamp" in stored_example

@@ -7,22 +7,30 @@ from textual.binding import Binding
 from textual.widgets import Footer, Static, ProgressBar
 from textual.containers import Container, Center
 
+
+def mk_hash(ex, collection):
+    string_repr = ex["content"] + collection
+    return md5(string_repr.encode()).hexdigest()
+
 class State:
     def __init__(self, examples, cache:str, collection:str) -> None:
         self.cache = Cache(cache)
         self.collection = collection
         self.examples = examples
-        self.position = 0
+        self._position = 0
         self._current_example = None
         self._content_key = "content"
         for i, ex in enumerate(examples):
             if self.mk_hash(ex) not in self.cache:
-                self.position = i
+                self._position = i
                 break
     
+    @property
+    def position(self):
+        return self._position
+    
     def mk_hash(self, ex):
-        string_repr = ex["content"] + self.collection
-        return md5(string_repr.encode()).hexdigest()
+        return mk_hash(ex, self.collection)
 
     def write_annot(self, label):
         if self.current_example:
@@ -39,25 +47,39 @@ class State:
     
     @property
     def current_example(self):
-        return self.examples[self.position]
+        return self.examples[self._position]
     
     def next_example(self):
-        if self.position == len(self.examples) - 1:
+        if self._position == len(self.examples) - 1:
             return {"content": "No more examples. All done!"}
-        self.position += 1
+        self._position += 1
         return self.current_example
 
     def prev_example(self):
-        if self.position == 0:
+        if self._position == 0:
             return self.current_example
-        self.position -= 1
+        self._position -= 1
         return self.current_example
     
     def done(self):
-        return self.position == len(self.examples) - 1
+        return self._position == len(self.examples) - 1
     
 
-def datatui(cache_name: str, input_stream: list, collection_name: str, pbar: bool = True, description=None):
+def datatui(input_stream: list, collection_name: str, cache_name: str = "annotations", pbar: bool = True, description=None):
+    """
+    Main function to run the datatui application.
+
+    Args:
+        input_stream (list): A list of examples to annotate.
+        collection_name (str): The name of the collection for these examples.
+        cache_name (str): The name or path of the cache to use for storing annotations.
+        pbar (bool, optional): Whether to display a progress bar. Defaults to True.
+        description (str, optional): A description to display above each example. Defaults to None.
+
+    This function initializes and runs the DatatuiApp, which provides a text-based user interface
+    for annotating examples. It uses the provided cache to store annotations and allows users
+    to navigate through examples, annotating them as 'yes', 'no', 'maybe', or skipping them.
+    """
     class DatatuiApp(App):
         ACTIVE_EFFECT_DURATION = 0.3
         CSS_PATH = Path(__file__).parent / "static" / "app.css"
@@ -127,4 +149,3 @@ def datatui(cache_name: str, input_stream: list, collection_name: str, pbar: boo
                 self.query_one("#pbar").update(progress=self.state.position)
     
     DatatuiApp().run()
-
