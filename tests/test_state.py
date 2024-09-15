@@ -1,7 +1,6 @@
 import pytest
 from datatui.app import State, mk_hash
 from diskcache import Cache
-from pathlib import Path
 import tempfile
 
 @pytest.fixture
