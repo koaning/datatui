@@ -1,2 +1,3 @@
 # datatui
-A TUI to generate datasets
+
+A TUI to generate datasets.
