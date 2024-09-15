@@ -18,6 +18,7 @@ def annotate(
     examples = list(srsly.read_jsonl(examples_path))
     datatui(cache, examples, collection, pbar=True, description=descr)
 
+
 @app.command()
 def export(
     cache: str = typer.Option("annotations", help='Cache path'),
@@ -34,7 +35,9 @@ def export(
     else:
         srsly.write_jsonl(file_out, relevant)
 
+
 if __name__ == "__main__":
     app()
+
 
 __all__ = ["annotate", "export"]
