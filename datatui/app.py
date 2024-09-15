@@ -12,6 +12,7 @@ def mk_hash(ex, collection):
     string_repr = ex["content"] + collection
     return md5(string_repr.encode()).hexdigest()
 
+
 class State:
     def __init__(self, examples, cache:str, collection:str) -> None:
         self.cache = Cache(cache)
@@ -47,6 +48,8 @@ class State:
     
     @property
     def current_example(self):
+        if self.done():
+            return {"content": "No more examples. All done!"}
         return self.examples[self._position]
     
     def next_example(self):
@@ -112,7 +115,7 @@ def datatui(input_stream: list, collection_name: str, cache_name: str = "annotat
         def update_view(self):
             self.query_one("#content").update(self._example_text())
             if pbar:
-                self.query_one("#pbar").update(progress=self.state.position)
+                self.query_one("#pbar").update(progress=self.state.position + 1)
         
         def _handle_annot_effect(self, answer: str) -> None:
             self.query_one("#content").remove_class("base-card-border")

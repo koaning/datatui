@@ -1,6 +1,8 @@
 import json
 import srsly
 import typer
+from rich.console import Console
+from rich.table import Table
 from diskcache import Cache
 from .app import datatui
 
@@ -34,6 +36,39 @@ def export(
             print(json.dumps(item))
     else:
         srsly.write_jsonl(file_out, relevant)
+
+
+@app.command()
+def count(
+    cache: str = typer.Option("annotations", help='Cache path'),
+):
+    """Count and pretty print the number of annotations per collection."""
+    cache = Cache(cache)
+    collections = {}
+    for key in cache.iterkeys():
+        item = cache[key]
+        collection = item.get('collection', 'default')
+        collections[collection] = collections.get(collection, 0) + 1
+    
+    if not collections:
+        print("No annotations found.")
+        return
+    
+    console = Console()
+    table = Table(title="Annotations per collection")
+    table.add_column("Collection", style="cyan", no_wrap=True)
+    table.add_column("Count", style="magenta", justify="right")
+
+    for collection, count in sorted(collections.items()):
+        table.add_row(collection, str(count))
+
+    table.add_section()
+    total = sum(collections.values())
+    table.add_row("Total", str(total), style="bold")
+
+    console.print(table)
+
+
 
 
 if __name__ == "__main__":
