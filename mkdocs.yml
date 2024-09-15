@@ -55,5 +55,11 @@ extra_css:
   - stylesheets/css/extra.css
 
 nav:
-  - Home: index.md
-  - cli: cli.md
+  - home: index.md
+  - cli: cli.md 
+  - api: api.md
+
+plugins:
+  - search
+  - mkdocstrings:
+      default_handler: python
