@@ -25,6 +25,8 @@ class State:
             if self.mk_hash(ex) not in self.cache:
                 self._position = i
                 break
+        else:
+            self._position = len(examples) - 1
     
     @property
     def position(self):
@@ -48,13 +50,13 @@ class State:
     
     @property
     def current_example(self):
-        if self.done():
+        if self._position == len(self.examples):
             return {"content": "No more examples. All done!"}
         return self.examples[self._position]
     
     def next_example(self):
-        if self._position == len(self.examples) - 1:
-            return {"content": "No more examples. All done!"}
+        if self._position == len(self.examples):
+            return self.current_example
         self._position += 1
         return self.current_example
 
@@ -63,10 +65,9 @@ class State:
             return self.current_example
         self._position -= 1
         return self.current_example
-    
+
     def done(self):
-        return self._position == len(self.examples) - 1
-    
+        return self._position == len(self.examples)
 
 def datatui(input_stream: list, collection_name: str, cache_name: str = "annotations", pbar: bool = True, description=None):
     """

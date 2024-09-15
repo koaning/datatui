@@ -18,15 +18,13 @@ def sample_input_stream():
 
 def test_state_initialization(temp_cache_dir, sample_input_stream):
     state = State(sample_input_stream, temp_cache_dir, "test_collection")
+    # Test that the state is initialized correctly
     assert len(state) == 3
     assert state.position == 0
     assert state.current_example == {"content": "Example 1"}
     assert state.collection == "test_collection"
     assert not state.done()
-
-def test_state_prev_next_example(temp_cache_dir, sample_input_stream):
-    state = State(sample_input_stream, temp_cache_dir, "test_collection")
-    assert state.position == 0
+    # Test that the next_example method works correctly
     assert state.next_example() == {"content": "Example 2"}
     assert state.current_example == {"content": "Example 2"}
     assert state.position == 1
@@ -34,12 +32,20 @@ def test_state_prev_next_example(temp_cache_dir, sample_input_stream):
     assert state.current_example == {"content": "Example 3"}
     assert state.position == 2
     assert state.next_example() == {"content": "No more examples. All done!"}
-    assert state.position == 2
+    assert state.position == 3
     assert state.done()
+    # This should not move the position
+    assert state.next_example() == {"content": "No more examples. All done!"}
+    assert state.position == 3
+    assert state.done()
+    # Test that the prev_example method works correctly
+    assert state.prev_example() == {"content": "Example 3"}
+    assert state.position == 2
     assert state.prev_example() == {"content": "Example 2"}
     assert state.position == 1
     assert state.prev_example() == {"content": "Example 1"}
     assert state.position == 0
+    # This should not move the position
     assert state.prev_example() == {"content": "Example 1"}
     assert state.position == 0
 
