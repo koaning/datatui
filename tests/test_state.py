@@ -1,5 +1,5 @@
 import pytest
-from datatui.app import State
+from datatui.app import State, mk_hash
 from diskcache import Cache
 from pathlib import Path
 import tempfile
@@ -53,3 +53,25 @@ def test_state_write_annot(temp_cache_dir, sample_input_stream):
     assert stored_example["label"] == "yes"
     assert stored_example["collection"] == "test_collection"
     assert "timestamp" in stored_example
+
+def test_mk_hash_function():
+    # Test that the order of keys doesn't affect the hash
+    example1 = {"content": "Test content", "other_key": "value"}
+    example2 = {"other_key": "value", "content": "Test content"}
+    collection = "test_collection"
+    
+    assert mk_hash(example1, collection) == mk_hash(example2, collection)
+
+    # Test that different collections produce different hashes
+    collection1 = "collection1"
+    collection2 = "collection2"
+    example = {"content": "Same content"}
+    
+    assert mk_hash(example, collection1) != mk_hash(example, collection2)
+
+    # Test that different content produces different hashes
+    example1 = {"content": "Content 1"}
+    example2 = {"content": "Content 2"}
+    collection = "same_collection"
+    
+    assert mk_hash(example1, collection) != mk_hash(example2, collection)
