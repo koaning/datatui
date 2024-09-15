@@ -13,3 +13,6 @@ ruff:
 	ruff check . --fix
 
 check: ruff test
+
+typerdocs: 
+	typer datatui.app utils docs > docs/cli.md

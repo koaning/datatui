@@ -84,6 +84,9 @@ def datatui(input_stream: list, collection_name: str, cache_name: str = "annotat
     for annotating examples. It uses the provided cache to store annotations and allows users
     to navigate through examples, annotating them as 'yes', 'no', 'maybe', or skipping them.
     """
+    if len(input_stream) == 0:
+        print("No examples to annotate. Exiting.")
+        return
     class DatatuiApp(App):
         ACTIVE_EFFECT_DURATION = 0.3
         CSS_PATH = Path(__file__).parent / "static" / "app.css"
@@ -110,7 +113,7 @@ def datatui(input_stream: list, collection_name: str, cache_name: str = "annotat
             if self.state.done():
                 return "\n\n" + content + "\n\n"
             if description:
-                return f"[bold black]{description}[/]\n\n" + content
+                return f"[bold yellow]{description}[/]\n\n" + content
             return content
 
         def update_view(self):
