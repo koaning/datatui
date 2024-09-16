@@ -19,7 +19,9 @@ pip install datatui
 
 ## Scope 
 
-The goal of this project is to offer a constrained and minimalistic alternative to full fledged web apps for labeling data. It allows you to annotate data with just four labels: `yes`, `no`, `maybe`, `skip`. Anything that you can render nicely in [rich](https://github.com/Textualize/rich) can be used as input. 
+The goal of this project is to offer a constrained and minimalistic alternative to full fledged web apps for data annotation. It allows you to annotate data with just four labels: `yes`, `no`, `maybe`, `skip`. Anything that you can render nicely in [rich](https://github.com/Textualize/rich) can be used as input. This setup excludes a lot of annotation tasks that require more complex interactions, but for simple tasks it also excludes a lot of overhead. 
+
+You only need a terminal, which also means that you can SSH into your cron server to have a look at some of your data.
 
 ## Example
 
