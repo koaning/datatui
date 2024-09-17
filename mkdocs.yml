@@ -40,7 +40,7 @@ markdown_extensions:
   - attr_list
 
 copyright: |
-  &copy; 2023 <Your Name>
+  &copy; 2024
 
 extra:
   social:

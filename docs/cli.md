@@ -1,5 +1,7 @@
 # CLI
 
+## `datatui`
+
 **Usage**:
 
 ```console
@@ -12,7 +14,7 @@ $ [OPTIONS] COMMAND [ARGS]...
 * `count`: Count and pretty print the number of...
 * `export`: Export annotations from the cache.
 
-## `annotate`
+### `annotate`
 
 Annotate and put some examples into the cache.
 
@@ -33,7 +35,7 @@ $ annotate [OPTIONS] EXAMPLES_PATH
 * `--descr TEXT`: Add a description
 * `--help`: Show this message and exit.
 
-## `count`
+### `count`
 
 Count and pretty print the number of annotations per collection.
 
@@ -48,7 +50,7 @@ $ count [OPTIONS]
 * `--cache TEXT`: Cache path  [default: annotations]
 * `--help`: Show this message and exit.
 
-## `export`
+### `export`
 
 Export annotations from the cache.
 

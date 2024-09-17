@@ -6,7 +6,7 @@ hide:
 
 # datatui 
 
-A minimal, but fun, annotation tool for the terminal.
+A minimal, and fun, annotation tool for the terminal.
 
 <img src="demo.svg">
 
@@ -16,10 +16,9 @@ A minimal, but fun, annotation tool for the terminal.
 pip install datatui
 ```
 
-
 ## Scope 
 
-The goal of this project is to offer a constrained and minimalistic alternative to full fledged web apps for data annotation. It allows you to annotate data with just four labels: `yes`, `no`, `maybe`, `skip`. Anything that you can render nicely in [rich](https://github.com/Textualize/rich) can be used as input. This setup excludes a lot of annotation tasks that require more complex interactions, but for simple tasks it also excludes a lot of overhead. 
+The goal of this project is to offer a constrained and minimalistic alternative to full fledged web apps for data annotation. You can only use four labels: `yes`, `no`, `maybe`, and `skip`. Only having a few options forces you to keep the scope small, which usually does wonders for data quality. It is still pretty flexible though, so you can use it for more complex tasks if you want. Anything that you can render nicely in [rich](https://github.com/Textualize/rich) can be rendered in `datatui`. 
 
 You only need a terminal, which also means that you can SSH into your cron server to have a look at some of your data.
 
@@ -33,7 +32,7 @@ but we also provide a demo below that highlights how to add panels.
 
 <img src="panel.svg">
 
-Here's the code that produces the above output.
+Here's the code that produces the above output. 
 
 ```python
 from rich.panel import Panel
@@ -99,3 +98,32 @@ if __name__ == "__main__":
 ```
 
 Note that this script can also be found in the examples folder of the repository.
+
+### How it works 
+
+Before an example is annotated it needs to be rendered. This is done by the `content_render` function. 
+This function assumes that the input is a dictionary and that the output is some sort of object that rich can render. 
+
+Given a renderable example, we do some extra work to prevent duplicates and to keep track of which examples have been annotated. This is done using a combination of a hashing function and [diskcache](https://calmcode.io/course/diskcache/introduction). If the hash of an example is not in the cache, the example is rendered and shown to the user. If the hash is in the cache, we simply skip it. After the annotation, the example is saved to the cache as JSON, together with the label that the user chose. 
+
+There are two details worth mentioning here on top of this. 
+
+- You can pass a `cache_name` to the `datatui` function. This allows you to configure the folder where we store the SQLite DB with all the annotations. 
+- You can also pass a `collection_name` to the `datatui` function. This name is added to each annotated example, and can be used to keep different annotation tasks separate. For example, you might want to have separate collections for each label, while still storing everything in the same SQLite instance. Adding a collection name will influence the hashing, and you can also use it to export a specific subset later.
+
+### Command line interface 
+
+You can also use `datatui` from the terminal. While it is preferable to define
+a datatui session in a Python script, the CLI can also be used to start a simple 
+sessions. 
+
+```bash
+python -m datatui annotate examples/arxiv.jsonl --cache annotations --collection default
+```
+
+In particular, the cli an be useful to write the annotations
+to disk using the `export` command. 
+
+```bash
+python -m datatui export --file-out annotations.jsonl --collection pokemon
+```
