@@ -1,5 +1,8 @@
+import orjson
+from collections import OrderedDict
 from pathlib import Path 
 from time import time
+from typing import Dict
 from diskcache import Cache 
 from hashlib import md5
 from textual.app import App, ComposeResult
@@ -8,8 +11,9 @@ from textual.widgets import Footer, Static, ProgressBar
 from textual.containers import Container, Center
 
 
-def mk_hash(ex, collection):
-    string_repr = ex["content"] + collection
+def mk_hash(ex: Dict, collection: str) -> str:
+    sorted_ex = OrderedDict(sorted(ex.items()))
+    string_repr = orjson.dumps(sorted_ex).decode('utf-8') + collection
     return md5(string_repr.encode()).hexdigest()
 
 
@@ -69,7 +73,7 @@ class State:
     def done(self):
         return self._position == len(self.examples)
 
-def datatui(input_stream: list, collection_name: str, cache_name: str = "annotations", pbar: bool = True, description=None):
+def datatui(input_stream: list, collection_name: str, cache_name: str = "annotations", pbar: bool = True, description=None, content_render=lambda x: x['content']):
     """
     Main function to run the datatui application.
 
@@ -108,16 +112,16 @@ def datatui(input_stream: list, collection_name: str, cache_name: str = "annotat
             self.state.write_annot(label=answer)
             self.update_view()
         
-        def _example_text(self):
-            content = self.state.current_example[self.state._content_key]
+        def _example_content(self):
+            content = self.state.current_example
             if self.state.done():
                 return "\n\n" + content + "\n\n"
             if description:
-                return f"[bold yellow]{description}[/]\n\n" + content
-            return content
+                return f"[bold yellow]{description}[/]\n\n" + content_render(content)
+            return content_render(content)
 
         def update_view(self):
-            self.query_one("#content").update(self._example_text())
+            self.query_one("#content").update(self._example_content())
             if pbar:
                 self.query_one("#pbar").update(progress=self.state.position + 1)
         
@@ -144,7 +148,7 @@ def datatui(input_stream: list, collection_name: str, cache_name: str = "annotat
             items = []
             if pbar:
                 items.append(Center(ProgressBar(total=len(self.state), show_eta=False, id="pbar")))
-            items.append(Static(self._example_text(), id='content', classes='gray-card-border'))
+            items.append(Static(self._example_content(), id='content', classes='gray-card-border'))
             yield Container(*items, id='container')
             yield Footer()
             

@@ -81,4 +81,4 @@ def add_entity_highlighting(examples: Iterable[Dict]) -> Iterable[Dict]:
         yield example
 
 
-__all__ = ["datatui"]
+__all__ = ["datatui", "new_batch", "add_entity_highlighting"]
