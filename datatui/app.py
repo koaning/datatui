@@ -79,7 +79,7 @@ class State:
     def done(self):
         return self._position == len(self.examples)
 
-def datatui(input_stream: list, collection_name: str, cache_name: str = "annotations", pbar: bool = True, description=None, content_render=lambda x: x['content']):
+def datatui(input_stream: list, collection_name: str, cache_name: str = "annotations", pbar: bool = True, description=None, content_render=lambda x: x['text']):
     """
     Main function to run the datatui application.
 
@@ -89,6 +89,7 @@ def datatui(input_stream: list, collection_name: str, cache_name: str = "annotat
         cache_name (str): The name or path of the cache to use for storing annotations.
         pbar (bool, optional): Whether to display a progress bar. Defaults to True.
         description (str, optional): A description to display above each example. Defaults to None.
+        content_render (function, optional): A function to render the content of each example. Defaults to lambda x: x['text'].
 
     This function initializes and runs the DatatuiApp, which provides a text-based user interface
     for annotating examples. It uses the provided cache to store annotations and allows users
