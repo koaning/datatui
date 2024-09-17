@@ -4,7 +4,6 @@ import typer
 from rich.console import Console
 from rich.table import Table
 from diskcache import Cache
-from rich import print as rich_print
 from .app import datatui
 
 

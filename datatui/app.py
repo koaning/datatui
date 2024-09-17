@@ -35,7 +35,7 @@ class State:
                 self._position = i
                 return self._position
         
-        self._position = len(self.examples) - 1
+        self._position = len(self.examples)
         return self._position
     
     @property
@@ -68,7 +68,6 @@ class State:
         if self._position == len(self.examples):
             return self.current_example
         self._position += 1
-        self._skip_allready_annotated()
         return self.current_example
 
     def prev_example(self):
@@ -120,12 +119,12 @@ def datatui(input_stream: list, collection_name: str, cache_name: str = "annotat
             self.update_view()
         
         def _example_content(self):
-            content = self.state.current_example
+            example = self.state.current_example
             if self.state.done():
-                return "\n\n" + content + "\n\n"
+                return Group("\n\nEverything is annotated! 🎉\n\n")
             if description:
-                return Group(f"[bold yellow]{description}[/]\n\n", content_render(content))
-            return content_render(content)
+                return Group(f"[bold yellow]{description}[/]\n\n", content_render(example))
+            return content_render(example)
 
         def update_view(self):
             self.query_one("#content").update(self._example_content())
