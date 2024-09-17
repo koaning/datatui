@@ -5,6 +5,7 @@ from time import time
 from typing import Dict
 from diskcache import Cache 
 from hashlib import md5
+from rich.console import Group
 from textual.app import App, ComposeResult
 from textual.binding import Binding
 from textual.widgets import Footer, Static, ProgressBar
@@ -25,12 +26,17 @@ class State:
         self._position = 0
         self._current_example = None
         self._content_key = "content"
-        for i, ex in enumerate(examples):
+        self._skip_allready_annotated()
+
+    
+    def _skip_allready_annotated(self):
+        for i, ex in enumerate(self.examples):
             if self.mk_hash(ex) not in self.cache:
                 self._position = i
-                break
-        else:
-            self._position = len(examples) - 1
+                return self._position
+        
+        self._position = len(self.examples) - 1
+        return self._position
     
     @property
     def position(self):
@@ -62,6 +68,7 @@ class State:
         if self._position == len(self.examples):
             return self.current_example
         self._position += 1
+        self._skip_allready_annotated()
         return self.current_example
 
     def prev_example(self):
@@ -117,7 +124,7 @@ def datatui(input_stream: list, collection_name: str, cache_name: str = "annotat
             if self.state.done():
                 return "\n\n" + content + "\n\n"
             if description:
-                return f"[bold yellow]{description}[/]\n\n" + content_render(content)
+                return Group(f"[bold yellow]{description}[/]\n\n", content_render(content))
             return content_render(content)
 
         def update_view(self):
