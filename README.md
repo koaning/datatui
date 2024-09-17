@@ -6,7 +6,7 @@ A minimal, and fun, annotation tool for the terminal.
 
 ## Installation
 
-```bash
+```
 pip install datatui
 ```
 
@@ -111,13 +111,13 @@ You can also use `datatui` from the terminal. While it is preferable to define
 a datatui session in a Python script, the CLI can also be used to start a simple 
 sessions. 
 
-```bash
+```
 python -m datatui annotate examples/arxiv.jsonl --cache annotations --collection default
 ```
 
 In particular, the cli an be useful to write the annotations
 to disk using the `export` command. 
 
-```bash
+```
 python -m datatui export --file-out annotations.jsonl --collection pokemon
 ```
