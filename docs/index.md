@@ -53,13 +53,14 @@ if __name__ == "__main__":
     # Run a new annotation session. Notice how we customise the content_render
     # function to use rich Panels and that we add a description/progress bar to 
     # the annotation task.
-    datatui(list(generator()), 
+    app = datatui(list(generator()), 
             cache_name="annotations", 
             collection_name="default",
             pbar=True, 
             description="Does this sentence suggest the article is about a [bold]new dataset[/bold]?.",
             content_render=lambda x: Panel(x["text"])
     )
+    app.run()
 ```
 
 By leveraging the `concent_render` function you can customise the look of your annotations as you see fit.
@@ -89,12 +90,13 @@ def render_image(ex):
     
 
 if __name__ == "__main__":
-    datatui(stream, 
+    app = datatui(stream, 
             cache_name="annotations", 
             collection_name="pokemon", 
             pbar=True, 
             description="Is this a fire pokemon?",
             content_render=render_image)
+    app.run()
 ```
 
 Note that this script can also be found in the examples folder of the repository.
