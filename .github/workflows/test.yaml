@@ -27,5 +27,11 @@ jobs:
       run: make install
     - name: Test
       run: uv run pytest
+    - name: Upload screenshots
+      uses: actions/upload-artifact@latest
+      if: failure()
+      with:
+          name: snapshots
+          path: datatui/snapshot_report.html
     - name: Ruff
       run: uv run ruff check .
