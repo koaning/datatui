@@ -13,9 +13,10 @@ def render_image(ex):
     
 
 if __name__ == "__main__":
-    datatui(stream, 
+    app = datatui(stream, 
             cache_name="annotations", 
             collection_name="pokemon", 
             pbar=True, 
             description="Is this a fire pokemon?",
             content_render=render_image)
+    app.run()

@@ -166,4 +166,4 @@ def datatui(input_stream: list, collection_name: str, cache_name: str = "annotat
             if pbar:
                 self.query_one("#pbar").update(progress=self.state.position)
     
-    DatatuiApp().run()
+    return DatatuiApp()

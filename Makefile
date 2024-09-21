@@ -1,5 +1,5 @@
 install:
-	python -m pip install -e . twine wheel pytest ruff mkdocs mkdocs-material mkdocstrings[python]
+	python -m pip install -e . twine wheel pytest ruff mkdocs mkdocs-material mkdocstrings[python] pytest-asyncio
 
 pypi:
 	python setup.py sdist

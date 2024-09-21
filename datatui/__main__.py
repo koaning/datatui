@@ -19,7 +19,8 @@ def annotate(
 ):
     """Annotate and put some examples into the cache."""
     examples = list(srsly.read_jsonl(examples_path))
-    datatui(examples, cache_name=cache, collection_name=collection, pbar=True, description=descr, content_render=lambda x: x[render_key])
+    app = datatui(examples, cache_name=cache, collection_name=collection, pbar=True, description=descr, content_render=lambda x: x[render_key])
+    app.run()
 
 
 @app.command()
