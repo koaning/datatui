@@ -4,7 +4,8 @@ from rich_pixels import Pixels
 from datatui import datatui
 from pathlib import Path
 
-stream = [{"path": str(p)} for p in sorted(Path("examples/pokemons").glob("*.png"))]
+sorted_pokemons = sorted([str(p) for p in Path("examples/pokemons").glob("*.png")])
+stream = [{"path": str(p)} for p in sorted_pokemons]
 
 def render_image(ex):
     with Image.open(ex["path"]) as image:
