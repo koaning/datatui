@@ -1,5 +1,5 @@
 install:
-	uv pip install -e . twine wheel pytest ruff mkdocs mkdocs-material mkdocstrings[python] pytest-textual-snapshot
+	uv pip install -e . twine wheel pytest ruff mkdocs mkdocs-material mkdocstrings[python] pytest-textual-snapshot pillow
 
 pypi:
 	python setup.py sdist
