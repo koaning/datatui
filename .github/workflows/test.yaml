@@ -24,8 +24,14 @@ jobs:
     - name: Install Venv
       run: uv venv
     - name: Install Dependencies
-      run: uv pip install -e ".[dev]" pytest ruff
+      run: make install
     - name: Test
       run: uv run pytest
+    - name: Upload screenshots
+      uses: actions/upload-artifact@v4
+      if: failure()
+      with:
+          name: snapshots
+          path: snapshot_report.html
     - name: Ruff
       run: uv run ruff check .

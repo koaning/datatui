@@ -14,11 +14,13 @@ def annotate(
     examples_path: str,
     cache: str = typer.Option("annotations", help='Cache path'),
     collection: str = typer.Option("default", help='Attach a collection name to each annotation'),
+    render_key: str = typer.Option("text", help='What key of the content to render'),
     descr: str = typer.Option(None, help='Add a description')
 ):
     """Annotate and put some examples into the cache."""
     examples = list(srsly.read_jsonl(examples_path))
-    datatui(cache, examples, collection, pbar=True, description=descr)
+    app = datatui(examples, cache_name=cache, collection_name=collection, pbar=True, description=descr, content_render=lambda x: x[render_key])
+    app.run()
 
 
 @app.command()
@@ -33,7 +35,7 @@ def export(
                 if collection is None or collection == cache[k]['collection'])
     if not file_out:
         for item in relevant:
-            print(json.dumps(item))
+            print(json.dumps(item))  # noqa
     else:
         srsly.write_jsonl(file_out, relevant)
 
